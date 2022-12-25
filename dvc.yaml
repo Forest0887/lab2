@@ -1,0 +1,39 @@
+stages:
+  create_dataset:
+    cmd: python .\scripts\create_dataset.py
+    deps:
+    - .\dataset\student-mat.csv
+    - .\scripts\create_dataset.py
+    outs:
+    - .\dataset\divided\test.csv
+    - .\dataset\divided\train.csv
+  create_features:
+    cmd: python .\scripts\create_features.py .\dataset\divided\test.csv .\dataset\divided\train.csv
+    deps:
+    - .\dataset\divided\test.csv
+    - .\dataset\divided\train.csv
+    - .\scripts\create_features.py
+    outs:
+    - .\dataset\features\test_features.csv
+    - .\dataset\features\train_features.csv
+  create_models:
+    cmd: python .\scripts\create_models.py .\dataset\features\train_features.csv .\dataset\features\train_label.csv
+    deps:
+    - .\dataset\features\train_features.csv
+    - .\dataset\features\train_label.csv
+    - .\scripts\create_models.py
+    outs:
+    - .\dataset\models\forest.pickle
+    - .\dataset\models\logistic.pickle
+    - .\dataset\models\sgdr.pickle
+  evaluate:
+    cmd: python .\scripts\evaluate.py .\dataset\features\test_features.csv .\dataset\features\test_label.csv
+    deps:
+    - .\dataset\features\test_features.csv
+    - .\dataset\features\test_label.csv
+    - .\dataset\models\forest.pickle
+    - .\dataset\models\logistic.pickle
+    - .\dataset\models\sgdr.pickle
+    - .\scripts\evaluate.py
+    outs:
+    - .\result.json

@@ -1,0 +1,8 @@
+
+dvc run --force -n create_dataset -d ".\dataset\student-mat.csv" -d ".\scripts\create_dataset.py" -o ".\dataset\divided\test.csv" -o ".\dataset\divided\train.csv" python .\scripts\create_dataset.py
+
+dvc run --force -n create_features -d ".\dataset\divided\test.csv" -d ".\dataset\divided\train.csv" -d ".\scripts\create_features.py" -o ".\dataset\features\test_features.csv" -o ".\dataset\features\train_features.csv" python ".\scripts\create_features.py" ".\dataset\divided\test.csv" ".\dataset\divided\train.csv"
+
+dvc run --force -n create_models -d ".\scripts\create_models.py" -d ".\dataset\features\train_features.csv" -d ".\dataset\features\train_label.csv" -o ".\dataset\models\logistic.pickle" -o ".\dataset\models\forest.pickle" -o ".\dataset\models\sgdr.pickle" python ".\scripts\create_models.py" ".\dataset\features\train_features.csv" ".\dataset\features\train_label.csv"
+
+dvc run --force -n evaluate -d ".\scripts\evaluate.py" -d ".\dataset\features\test_features.csv" -d ".\dataset\features\test_label.csv" -d ".\dataset\models\logistic.pickle" -d ".\dataset\models\forest.pickle" -d ".\dataset\models\sgdr.pickle" -o ".\result.json" python ".\scripts\evaluate.py" ".\dataset\features\test_features.csv" ".\dataset\features\test_label.csv"

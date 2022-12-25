@@ -1,0 +1,84 @@
+schema: '2.0'
+stages:
+  create_dataset:
+    cmd: python .\scripts\create_dataset.py
+    deps:
+    - path: .\dataset\student-mat.csv
+      md5: 83dc97a218a3055f51cfca1e76b29036
+      size: 41983
+    - path: .\scripts\create_dataset.py
+      md5: b33f5808760fc36eb216a9bfa3803748
+      size: 621
+    outs:
+    - path: .\dataset\divided\test.csv
+      md5: 0a7a86963721244002c0c38a55927b2a
+      size: 8653
+    - path: .\dataset\divided\train.csv
+      md5: 7637b280374505e73c70d59eed1a6f9e
+      size: 33955
+  create_features:
+    cmd: python .\scripts\create_features.py .\dataset\divided\test.csv .\dataset\divided\train.csv
+    deps:
+    - path: .\dataset\divided\test.csv
+      md5: 0a7a86963721244002c0c38a55927b2a
+      size: 8653
+    - path: .\dataset\divided\train.csv
+      md5: 7637b280374505e73c70d59eed1a6f9e
+      size: 33955
+    - path: .\scripts\create_features.py
+      md5: 167aff31eed809ae71eb99bef06898b1
+      size: 860
+    outs:
+    - path: .\dataset\features\test_features.csv
+      md5: 45440ea282f349cfd55cacc971f21afa
+      size: 645
+    - path: .\dataset\features\train_features.csv
+      md5: 883c9f03e9d774b8c00600d3543164a7
+      size: 2541
+  create_models:
+    cmd: python .\scripts\create_models.py .\dataset\features\train_features.csv .\dataset\features\train_label.csv
+    deps:
+    - path: .\dataset\features\train_features.csv
+      md5: 883c9f03e9d774b8c00600d3543164a7
+      size: 2541
+    - path: .\dataset\features\train_label.csv
+      md5: 236e42ad319c6088e474d00532a9de2a
+      size: 958
+    - path: .\scripts\create_models.py
+      md5: 72148dd174f3a96613d55fb99a55ce80
+      size: 1199
+    outs:
+    - path: .\dataset\models\forest.pickle
+      md5: 3812b2d0a15c537ae299758d654c3e94
+      size: 630983
+    - path: .\dataset\models\logistic.pickle
+      md5: 35b718ea592b057b71560668dbd29099
+      size: 952
+    - path: .\dataset\models\sgdr.pickle
+      md5: 8948fd8608bced4b3793ffb2b9f962cf
+      size: 825
+  evaluate:
+    cmd: python .\scripts\evaluate.py .\dataset\features\test_features.csv .\dataset\features\test_label.csv
+    deps:
+    - path: .\dataset\features\test_features.csv
+      md5: 45440ea282f349cfd55cacc971f21afa
+      size: 645
+    - path: .\dataset\features\test_label.csv
+      md5: 1063ce144cdf017903bb208d113f18cb
+      size: 247
+    - path: .\dataset\models\forest.pickle
+      md5: 3812b2d0a15c537ae299758d654c3e94
+      size: 630983
+    - path: .\dataset\models\logistic.pickle
+      md5: 35b718ea592b057b71560668dbd29099
+      size: 952
+    - path: .\dataset\models\sgdr.pickle
+      md5: 8948fd8608bced4b3793ffb2b9f962cf
+      size: 825
+    - path: .\scripts\evaluate.py
+      md5: e24d0605cae59504766425fdb6b67870
+      size: 1348
+    outs:
+    - path: .\result.json
+      md5: dfd600fd69db333c16269adb14bbebb5
+      size: 223
